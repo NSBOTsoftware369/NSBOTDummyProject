@@ -1,5 +1,7 @@
 package com.zasa.nsbotdummyproject
 
+import android.graphics.RectF
+import android.hardware.usb.UsbEndpoint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.slamtec.slamware.AbstractSlamwarePlatform
+import com.slamtec.slamware.discovery.DeviceManager
+import com.slamtec.slamware.geometry.PointF
+import com.slamtec.slamware.robot.MapType
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,10 +22,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var userList:ArrayList<MapData>
     private lateinit var userAdapter:MapAdapter
+    private lateinit var platform: AbstractSlamwarePlatform
+    private lateinit var startPoint : PointF
+    private lateinit var area : RectF
+    private lateinit var map : com.slamtec.slamware.robot.Map
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // robot platform
+        platform = DeviceManager.connect()
+        //get area
+        area = platform.getKnownArea(MapType.BITMAP_8BIT)
+        //get map and set to area
+        map = platform.getMap(MapType.BITMAP_8BIT, area)
+        // set the start point
+        startPoint = map.origin
+
         /**set List*/
         userList = ArrayList()
         /**set find Id*/
