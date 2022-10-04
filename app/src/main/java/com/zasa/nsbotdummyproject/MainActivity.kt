@@ -12,9 +12,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.slamtec.slamware.AbstractSlamwarePlatform
+import com.slamtec.slamware.action.IMoveAction
 import com.slamtec.slamware.discovery.DeviceManager
 import com.slamtec.slamware.geometry.PointF
+import com.slamtec.slamware.robot.Location
 import com.slamtec.slamware.robot.MapType
+import com.slamtec.slamware.robot.MoveOption
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,6 +29,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startPoint : PointF
     private lateinit var area : RectF
     private lateinit var map : com.slamtec.slamware.robot.Map
+    private lateinit var moveOption: MoveOption
+    private lateinit var location: Location
+    private lateinit var action: IMoveAction
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +45,25 @@ class MainActivity : AppCompatActivity() {
         map = platform.getMap(MapType.BITMAP_8BIT, area)
         // set the start point
         startPoint = map.origin
+
+        //movie option
+        moveOption.isPrecise = true
+        moveOption.isMilestone = true
+
+        // dummy locations
+        val table1 = Location(0F, 1F, 0F)
+        val table2 = Location(0F, 1F, 0F)
+        val table3 = Location(0F, 1F, 0F)
+
+        // dummy tables
+//        action = platform.moveTo(table1, moveOption, 0)
+//        action.waitUntilDone()
+//
+//        action = platform.moveTo(table2, moveOption, 0)
+//        action.waitUntilDone()
+//
+//        action = platform.moveTo(table3, moveOption, 0)
+//        action.waitUntilDone()
 
         /**set List*/
         userList = ArrayList()
@@ -69,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 dialog,_->
             val locationName = locationName.text.toString()
             val locationId = locationId.text.toString()
-            userList.add(MapData("Location Name: $locationName","Table ID. : $locationId"))
+            userList.add(MapData("Location Name: $startPoint","Table ID. : ${Location()}"))
             userAdapter.notifyDataSetChanged()
             Toast.makeText(this,"Adding User Information Success",Toast.LENGTH_SHORT).show()
             dialog.dismiss()
