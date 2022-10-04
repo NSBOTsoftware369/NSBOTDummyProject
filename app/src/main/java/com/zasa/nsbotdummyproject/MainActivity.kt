@@ -4,6 +4,7 @@ import android.graphics.RectF
 import android.hardware.usb.UsbEndpoint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
@@ -14,10 +15,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.slamtec.slamware.AbstractSlamwarePlatform
 import com.slamtec.slamware.action.IMoveAction
 import com.slamtec.slamware.discovery.DeviceManager
+import com.slamtec.slamware.exceptions.*
 import com.slamtec.slamware.geometry.PointF
 import com.slamtec.slamware.robot.Location
 import com.slamtec.slamware.robot.MapType
 import com.slamtec.slamware.robot.MoveOption
+import com.slamtec.slamware.robot.PowerStatus
+
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,24 +30,56 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recv: RecyclerView
     private lateinit var userList:ArrayList<MapData>
     private lateinit var userAdapter:MapAdapter
-    private lateinit var platform: AbstractSlamwarePlatform
+    private lateinit var rootPlatform: AbstractSlamwarePlatform
     private lateinit var startPoint : PointF
     private lateinit var area : RectF
     private lateinit var map : com.slamtec.slamware.robot.Map
     private lateinit var moveOption: MoveOption
     private lateinit var location: Location
     private lateinit var action: IMoveAction
+    private lateinit var powerStatus: PowerStatus
+    private lateinit var moveToHome : IMoveAction
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // robot platform
-        platform = DeviceManager.connect()
+        // enter your network ip and port
+        rootPlatform = DeviceManager.connect()
+
+        try {
+            if (powerStatus.batteryPercentage <= 20){
+                moveToHome = rootPlatform.goHome()
+            }else{
+                // robot can do rest of the work
+            }
+        }catch (e: ConnectionFailException) {
+            Log.d(TAG, "Connection Fail");
+            e.printStackTrace();
+        } catch (e: ParseInvalidException) {
+            Log.d(TAG, "Parse Invalid");
+            e.printStackTrace();
+        } catch (e : InvalidArgumentException) {
+            Log.d(TAG, "Invalid Argument");
+            e.printStackTrace();
+        } catch (e: ConnectionTimeOutException) {
+            Log.d(TAG, "Connection TimeOut");
+            e.printStackTrace();
+        } catch (e : RequestFailException) {
+            Log.d(TAG, "Request Fail");
+            e.printStackTrace();
+        } catch (e : UnauthorizedRequestException) {
+            Log.d(TAG, "Unauthorized Request");
+            e.printStackTrace();
+        } catch (e : UnsupportedCommandException) {
+            Log.d(TAG, "Unsupported Command");
+            e.printStackTrace();
+        }
         //get area
-        area = platform.getKnownArea(MapType.BITMAP_8BIT)
+        area = rootPlatform.getKnownArea(MapType.BITMAP_8BIT)
         //get map and set to area
-        map = platform.getMap(MapType.BITMAP_8BIT, area)
+        map = rootPlatform.getMap(MapType.BITMAP_8BIT, area)
         // set the start point
         startPoint = map.origin
 
@@ -92,8 +129,6 @@ class MainActivity : AppCompatActivity() {
         addDialog.setView(v)
         addDialog.setPositiveButton("Ok"){
                 dialog,_->
-            val locationName = locationName.text.toString()
-            val locationId = locationId.text.toString()
             userList.add(MapData("Location Name: $startPoint","Table ID. : ${Location()}"))
             userAdapter.notifyDataSetChanged()
             Toast.makeText(this,"Adding User Information Success",Toast.LENGTH_SHORT).show()
