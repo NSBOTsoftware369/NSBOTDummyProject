@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         // robot platform
         // enter your network ip and port
-//         rootPlatform = DeviceManager.connect()
+        rootPlatform = DeviceManager.connect("192.168.1.102", 5555)
 
         val batteryStatus = powerStatus.batteryPercentage
         try {
@@ -55,53 +55,57 @@ class MainActivity : AppCompatActivity() {
                 moveToPoint = rootPlatform.goHome()
             } else {
                 // robot can do rest of the work
-             }
-            } catch (e: ConnectionFailException) {
-                Log.d(TAG, "Connection Fail");
-                e.printStackTrace();
-            } catch (e: ParseInvalidException) {
-                Log.d(TAG, "Parse Invalid");
-                e.printStackTrace();
-            } catch (e : InvalidArgumentException) {
-                Log.d(TAG, "Invalid Argument");
-                e.printStackTrace();
-            } catch (e: ConnectionTimeOutException) {
-                Log.d(TAG, "Connection TimeOut");
-                e.printStackTrace();
-            } catch (e : RequestFailException) {
-                Log.d(TAG, "Request Fail");
-                e.printStackTrace();
-            } catch (e : UnauthorizedRequestException) {
-                Log.d(TAG, "Unauthorized Request");
-                e.printStackTrace();
-            } catch (e : UnsupportedCommandException) {
-                Log.d(TAG, "Unsupported Command");
-                e.printStackTrace();
             }
+        } catch (e: ConnectionFailException) {
+            Log.d(TAG, "Connection Fail");
+            e.printStackTrace();
+        } catch (e: ParseInvalidException) {
+            Log.d(TAG, "Parse Invalid");
+            e.printStackTrace();
+        } catch (e: InvalidArgumentException) {
+            Log.d(TAG, "Invalid Argument");
+            e.printStackTrace();
+        } catch (e: ConnectionTimeOutException) {
+            Log.d(TAG, "Connection TimeOut");
+            e.printStackTrace();
+        } catch (e: RequestFailException) {
+            Log.d(TAG, "Request Fail");
+            e.printStackTrace();
+        } catch (e: UnauthorizedRequestException) {
+            Log.d(TAG, "Unauthorized Request");
+            e.printStackTrace();
+        } catch (e: UnsupportedCommandException) {
+            Log.d(TAG, "Unsupported Command");
+            e.printStackTrace();
+        }
 
 
-            //get area
-            area = rootPlatform.getKnownArea(MapType.BITMAP_8BIT)
-            //get map and set to area
-            map = rootPlatform.getMap(MapType.BITMAP_8BIT, area)
-            // set the start point
-            startPoint = map.origin
+        //get area
+        area = rootPlatform.getKnownArea(MapType.BITMAP_8BIT)
+        //get map and set to area
+        map = rootPlatform.getMap(MapType.BITMAP_8BIT, area)
+        // set the start point
+        startPoint = map.origin
 
-            //movie option
-            moveOption.isPrecise = true
-            moveOption.isMilestone = true
+        //movie option
+        moveOption.isPrecise = true
+        moveOption.isMilestone = true
 
-            // dummy locations
-            val table1 = Location(0F, 1F, 0F)
-            val table2 = Location(0F, 1F, 0F)
-            val table3 = Location(0F, 1F, 0F)
+        // dummy locations
+        val table1 = Location(0F, 1F, 0F)
+        val table2 = Location(0F, 1F, 0F)
+        val table3 = Location(0F, 1F, 0F)
 
 
         btnAddMap.setOnClickListener {
             moveToPoint = rootPlatform.moveTo(table1, moveOption, 0F)
+            moveToPoint = rootPlatform.moveTo(table2, moveOption, 0F)
+            moveToPoint = rootPlatform.moveTo(table3, moveOption, 0F)
         }
         moveToPoint.waitUntilDone()
-            // dummy tables
+
+
+        // dummy tables
 //        action = platform.moveTo(table1, moveOption, 0)
 //        action.waitUntilDone()
 //
@@ -111,22 +115,22 @@ class MainActivity : AppCompatActivity() {
 //        action = platform.moveTo(table3, moveOption, 0)
 //        action.waitUntilDone()
 
-            /**set List*/
-            userList = ArrayList()
-            /**set find Id*/
-            addsBtn = findViewById(R.id.btnAddMap)
-            recv = findViewById(R.id.rvMaps)
-            /**set Adapter*/
-            userAdapter = MapAdapter(this, userList)
-            /**setRecycler view Adapter*/
-            recv.layoutManager = LinearLayoutManager(this)
-            recv.adapter = userAdapter
-            /**set Dialog*/
-            addsBtn.setOnClickListener {
+//        /**set List*/
+//        userList = ArrayList()
+//        /**set find Id*/
+//        addsBtn = findViewById(R.id.btnAddMap)
+//        recv = findViewById(R.id.rvMaps)
+//        /**set Adapter*/
+//        userAdapter = MapAdapter(this, userList)
+//        /**setRecycler view Adapter*/
+//        recv.layoutManager = LinearLayoutManager(this)
+//        recv.adapter = userAdapter
+//        /**set Dialog*/
+//        addsBtn.setOnClickListener {
+//
+//        }
 
-            }
-
-        }
+    }
 
 //        private fun addInfo() {
 //            val inflter = LayoutInflater.from(this)
@@ -155,4 +159,4 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
-    }
+}
