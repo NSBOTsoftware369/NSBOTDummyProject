@@ -17,10 +17,7 @@ import com.slamtec.slamware.action.IMoveAction
 import com.slamtec.slamware.discovery.DeviceManager
 import com.slamtec.slamware.exceptions.*
 import com.slamtec.slamware.geometry.PointF
-import com.slamtec.slamware.robot.Location
-import com.slamtec.slamware.robot.MapType
-import com.slamtec.slamware.robot.MoveOption
-import com.slamtec.slamware.robot.PowerStatus
+import com.slamtec.slamware.robot.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 private const val TAG = "MainActivity"
@@ -40,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var action: IMoveAction
     private lateinit var powerStatus: PowerStatus
     private lateinit var moveToPoint: IMoveAction
+    var isLocalized : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         // robot platform
         // enter your network ip and port
         rootPlatform = DeviceManager.connect("192.168.1.102", 5555)
+        isLocalized = rootPlatform.mapLocalization
 
         val batteryStatus = powerStatus.batteryPercentage
         try {
@@ -83,11 +82,11 @@ class MainActivity : AppCompatActivity() {
         //get area
         area = rootPlatform.getKnownArea(MapType.BITMAP_8BIT)
         //get map and set to area
-        map = rootPlatform.getMap(MapType.BITMAP_8BIT, area)
+        map = rootPlatform.getMap(MapType.BITMAP_8BIT, MapKind.EXPLORE_MAP, area)
         // set the start point
         startPoint = map.origin
 
-        //movie option
+        //move option
         moveOption.isPrecise = true
         moveOption.isMilestone = true
 
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         val table1 = Location(0F, 1F, 0F)
         val table2 = Location(0F, 1F, 0F)
         val table3 = Location(0F, 1F, 0F)
-
 
         btnAddMap.setOnClickListener {
             moveToPoint = rootPlatform.moveTo(table1, moveOption, 0F)
