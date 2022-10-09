@@ -54,6 +54,30 @@ class MainActivity : AppCompatActivity() {
                 moveToPoint = rootPlatform.goHome()
             } else {
                 // robot can do rest of the work
+
+                //get area
+                area = rootPlatform.getKnownArea(MapType.BITMAP_8BIT, MapKind.EXPLORE_MAP)
+                //get map and set to area
+                map = rootPlatform.getMap(MapType.BITMAP_8BIT, MapKind.EXPLORE_MAP, area)
+                // set the start point
+                startPoint = map.origin
+
+
+                //move option
+                moveOption.isPrecise = true
+                moveOption.isMilestone = true
+
+                // dummy locations
+                val table1 = Location(0F, 1F, 0F)
+                val table2 = Location(0F, 1F, 0F)
+                val table3 = Location(0F, 1F, 0F)
+
+                btnAddMap.setOnClickListener {
+                    moveToPoint = rootPlatform.moveTo(table1, moveOption, 0F)
+                    moveToPoint = rootPlatform.moveTo(table2, moveOption, 0F)
+                    moveToPoint = rootPlatform.moveTo(table3, moveOption, 0F)
+                }
+                moveToPoint.waitUntilDone()
             }
         } catch (e: ConnectionFailException) {
             Log.d(TAG, "Connection Fail");
@@ -79,28 +103,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        //get area
-        area = rootPlatform.getKnownArea(MapType.BITMAP_8BIT)
-        //get map and set to area
-        map = rootPlatform.getMap(MapType.BITMAP_8BIT, MapKind.EXPLORE_MAP, area)
-        // set the start point
-        startPoint = map.origin
 
-        //move option
-        moveOption.isPrecise = true
-        moveOption.isMilestone = true
-
-        // dummy locations
-        val table1 = Location(0F, 1F, 0F)
-        val table2 = Location(0F, 1F, 0F)
-        val table3 = Location(0F, 1F, 0F)
-
-        btnAddMap.setOnClickListener {
-            moveToPoint = rootPlatform.moveTo(table1, moveOption, 0F)
-            moveToPoint = rootPlatform.moveTo(table2, moveOption, 0F)
-            moveToPoint = rootPlatform.moveTo(table3, moveOption, 0F)
-        }
-        moveToPoint.waitUntilDone()
 
 
         // dummy tables
